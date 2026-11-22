@@ -221,6 +221,39 @@
       padding: 4px 2px;
     }
 
+    .support-trigger {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 7px 14px;
+      border-radius: 999px;
+      border: 1px solid #26A17B;
+      background: rgba(38, 161, 123, 0.16);
+      color: #FFFFFF;
+      font-size: 12.5px;
+      font-weight: 600;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+      cursor: pointer;
+      box-shadow: 0 0 18px rgba(38, 161, 123, 0.25);
+      transition: background 0.2s ease, transform 0.2s ease, box-shadow 0.2s ease;
+    }
+
+    .support-trigger:hover {
+      background: rgba(38, 161, 123, 0.28);
+      box-shadow: 0 0 24px rgba(38, 161, 123, 0.45);
+      transform: translateY(-1px);
+    }
+
+    .support-dot {
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background: #26A17B;
+      box-shadow: 0 0 8px #26A17B;
+      flex-shrink: 0;
+    }
+
     .roadster-wordmark {
       width: 100%;
       max-width: 380px;
@@ -820,6 +853,96 @@
       cursor: pointer;
     }
 
+    /* Mobile & Tablet Responsive Layout */
+    @media (max-width: 1079px) {
+      .layout {
+        flex-direction: column;
+        min-height: 100dvh;
+      }
+
+      .hero {
+        flex: none;
+        width: 100%;
+        height: 52vh;
+        height: 52dvh;
+        min-height: 300px;
+        max-height: 480px;
+      }
+
+      .configurator {
+        flex: 1 0 auto;
+        width: 100%;
+      }
+    }
+
+    @media (max-width: 600px) {
+      .hero-header {
+        padding: 18px 20px;
+      }
+
+      .brand-logo {
+        height: 13px;
+      }
+
+      .slider-controls {
+        padding: 0 16px 18px;
+        gap: 10px;
+      }
+
+      .nav-btn,
+      .dots-pill {
+        height: 38px;
+      }
+
+      .nav-btn {
+        width: 38px;
+      }
+
+      .dot-btn {
+        width: 22px;
+        height: 32px;
+      }
+
+      .configurator {
+        padding: 20px 18px 36px;
+      }
+
+      .region-bar {
+        margin-bottom: 20px;
+      }
+
+      .roadster-wordmark {
+        margin-bottom: 20px;
+      }
+
+      .tier-card {
+        padding: 16px 18px;
+        gap: 8px;
+      }
+
+      .tier-name {
+        font-size: 17px;
+      }
+
+      .summary {
+        margin-top: 24px;
+      }
+
+      .usdt-address-row {
+        grid-template-columns: 1fr auto;
+      }
+
+      .receipt-dialog {
+        width: calc(100vw - 24px);
+        max-height: 86dvh;
+      }
+
+      #support-thread {
+        height: 42dvh !important;
+        min-height: 200px;
+      }
+    }
+
     /* Desktop: Lock car side & scroll only configurator */
     @media (min-width: 1080px) {
       .layout {
@@ -915,9 +1038,10 @@
 
     <!-- Right Side: Roadster Reservation Configurator -->
     <section class="configurator" aria-label="Roadster reservation configurator">
-      <div class="region-bar" style="gap: 18px;">
-        <button class="region-btn" id="support-open-btn" type="button" aria-label="Contact support">
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true">
+      <div class="region-bar" style="gap: 14px;">
+        <button class="support-trigger" id="support-open-btn" type="button" aria-label="Contact support">
+          <span class="support-dot" aria-hidden="true"></span>
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true">
             <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
           </svg>
           <span>Support</span>
@@ -1171,6 +1295,19 @@
         if (event.key === 'ArrowLeft') setSlide(currentSlide - 1);
         if (event.key === 'ArrowRight') setSlide(currentSlide + 1);
       });
+
+      // Touch swipe support for mobile image slider
+      const heroEl = document.querySelector('.hero');
+      let touchStartX = 0;
+      heroEl.addEventListener('touchstart', (e) => {
+        touchStartX = e.changedTouches[0].clientX;
+      }, { passive: true });
+      heroEl.addEventListener('touchend', (e) => {
+        const dx = e.changedTouches[0].clientX - touchStartX;
+        if (Math.abs(dx) > 40) {
+          setSlide(dx < 0 ? currentSlide + 1 : currentSlide - 1);
+        }
+      }, { passive: true });
 
       // Edition selection & pricing summary
       const tierCards = Array.from(document.querySelectorAll('.tier-card'));
