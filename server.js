@@ -21,7 +21,7 @@ const BOT_TOKEN = process.env.TELEGRAM_BOT_TOKEN || '';
 const CHAT_ID = process.env.TELEGRAM_CHAT_ID || '';
 
 const ROOT = __dirname;
-const HTML_FILE = path.join(ROOT, 'Kestrel Reservation Page – Kestrel reservation.html');
+const HTML_FILE = path.join(ROOT, 'index.html');
 const VISITS_FILE = path.join(ROOT, 'visits.json');
 const RESERVATIONS_FILE = path.join(ROOT, 'reservations.json');
 const SUPPORT_FILE = path.join(ROOT, 'support_chats.json');
