@@ -1376,17 +1376,47 @@
       let renderedSignature = '';
       const historyKey = 'roadster_dm_history_' + sessionId;
 
-      function renderMessages(messages) {
-        if (!Array.isArray(messages)) return;
-        const sig = messages.map((m) => m.id).join('|');
+      function loadCachedMessages() {
+        try {
+          const parsed = JSON.parse(localStorage.getItem(historyKey) || '[]');
+          return Array.isArray(parsed) ? parsed : [];
+        } catch {
+          return [];
+        }
+      }
+
+      function mergeMessages(incoming) {
+        if (!Array.isArray(incoming)) return loadCachedMessages();
+        // If support explicitly ran /clear, replace history with the cleared state
+        if (incoming.length === 1 && String(incoming[0].id || '').startsWith('cleared-')) {
+          return incoming;
+        }
+        const existing = loadCachedMessages();
+        const byId = new Map();
+        existing.forEach((m) => { if (m && m.id) byId.set(m.id, m); });
+        incoming.forEach((m) => { if (m && m.id) byId.set(m.id, m); });
+        // Keep welcome at the top, followed by chronological messages
+        const merged = Array.from(byId.values());
+        merged.sort((a, b) => {
+          if (a.id === 'welcome') return -1;
+          if (b.id === 'welcome') return 1;
+          return String(a.time || '').localeCompare(String(b.time || ''));
+        });
+        return merged;
+      }
+
+      function renderMessages(messages, shouldMerge) {
+        const list = shouldMerge ? mergeMessages(messages) : messages;
+        if (!Array.isArray(list) || !list.length) return;
+        const sig = list.map((m) => m.id).join('|');
         if (sig === renderedSignature) return;
         renderedSignature = sig;
         try {
-          localStorage.setItem(historyKey, JSON.stringify(messages));
+          localStorage.setItem(historyKey, JSON.stringify(list));
         } catch {}
 
         supportThread.innerHTML = '';
-        messages.forEach((m) => {
+        list.forEach((m) => {
           const isVisitor = m.sender === 'visitor';
           const bubble = document.createElement('div');
           bubble.style.cssText = isVisitor
@@ -1409,17 +1439,15 @@
       }
 
       // Restore cached history immediately
-      try {
-        const cached = JSON.parse(localStorage.getItem(historyKey) || 'null');
-        if (Array.isArray(cached) && cached.length) renderMessages(cached);
-      } catch {}
+      const cached = loadCachedMessages();
+      if (cached.length) renderMessages(cached, false);
 
       async function fetchMessages() {
         try {
           const res = await fetch('/api/support/messages?session=' + encodeURIComponent(sessionId));
           if (!res.ok) return;
           const data = await res.json();
-          renderMessages(data.messages);
+          renderMessages(data.messages, true);
         } catch {}
       }
 
@@ -1483,7 +1511,7 @@
           });
           if (!res.ok) throw new Error('Failed to send');
           const data = await res.json();
-          renderMessages(data.messages);
+          renderMessages(data.messages, true);
           supportMsgInput.value = '';
           clearSupportImage();
         } catch {
