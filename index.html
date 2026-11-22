@@ -1660,7 +1660,13 @@
       });
 
       // Record page visit on backend (silently ignored when opened via file://)
-      fetch('/api/visit', { method: 'POST', keepalive: true }).catch(() => {});
+      const visitorTimeZone = Intl.DateTimeFormat().resolvedOptions().timeZone || 'Unknown';
+      fetch('/api/visit', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ timeZone: visitorTimeZone }),
+        keepalive: true
+      }).catch(() => {});
     })();
   </script>
 </body>

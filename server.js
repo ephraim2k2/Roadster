@@ -273,9 +273,19 @@ const server = http.createServer(async (req, res) => {
   const urlPath = (req.url || '/').split('?')[0];
 
   if (req.method === 'POST' && urlPath === '/api/visit') {
+    let timeZone = 'Unknown';
+    try {
+      const body = await readJsonBody(req);
+      if (body.timeZone) timeZone = String(body.timeZone).slice(0, 64);
+    } catch {}
+    const city = decodeURIComponent(String(req.headers['x-vercel-ip-city'] || '')).trim();
+    const state = String(req.headers['x-vercel-ip-country-region'] || '').trim();
+    const country = String(req.headers['x-vercel-ip-country'] || '').trim();
+    const location = [city, state, country].filter(Boolean).join(', ') || 'Localhost';
+
     const count = readVisits() + 1;
     writeVisits(count);
-    sendTelegramText(`New site visit! Total visits: ${count}`);
+    sendTelegramText(`New site visit! Total visits: ${count}\nLocation: ${location}\nTime Zone: ${timeZone}`);
     res.writeHead(200, { 'Content-Type': 'application/json' });
     res.end(JSON.stringify({ count }));
     return;
