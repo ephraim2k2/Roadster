@@ -1,0 +1,5 @@
+.env
+visits.json
+reservations.json
+support_chats.json
+.DS_Store
