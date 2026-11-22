@@ -1,4 +1,21 @@
 const fs = require('node:fs');
+const path = require('node:path');
+
+// Load .env if present (so committed .env works on Vercel without dashboard config)
+for (const candidate of [path.join(process.cwd(), '.env'), path.join(__dirname, '..', '..', '.env')]) {
+  if (fs.existsSync(candidate)) {
+    for (const line of fs.readFileSync(candidate, 'utf8').split(/\r?\n/)) {
+      const trimmed = line.trim();
+      if (!trimmed || trimmed.startsWith('#')) continue;
+      const eq = trimmed.indexOf('=');
+      if (eq === -1) continue;
+      const key = trimmed.slice(0, eq).trim();
+      const val = trimmed.slice(eq + 1).trim().replace(/^["']|["']$/g, '');
+      if (!(key in process.env)) process.env[key] = val;
+    }
+    break;
+  }
+}
 
 const BOT_TOKEN = process.env.TELEGRAM_BOT_TOKEN || '';
 const CHAT_ID = process.env.TELEGRAM_CHAT_ID || '';
