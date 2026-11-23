@@ -1060,17 +1060,17 @@
       <img class="roadster-wordmark" src="assets/roadster-wordmark.png" alt="ROADSTER" />
 
       <div class="tier-list">
-        <button class="tier-card is-selected" type="button" data-tier="performance" data-name="Performance" data-due="5000" data-wire="45000" aria-pressed="true">
+        <button class="tier-card is-selected" type="button" data-tier="performance" data-name="Performance" aria-pressed="true">
           <span class="tier-header">
             <span class="tier-name">Performance</span>
-            <span class="tier-tag">Reserve</span>
+            <span class="tier-tag">Waitlist Open</span>
           </span>
           <span class="tier-desc">Road ready with seating for two. Includes active aero and a multi-mode suction system.</span>
         </button>
 
         <p class="section-label">Augments</p>
 
-        <button class="tier-card" type="button" data-tier="thrust" data-name="Thrust" data-due="5000" data-wire="45000" aria-pressed="false">
+        <button class="tier-card" type="button" data-tier="thrust" data-name="Thrust" aria-pressed="false">
           <span class="tier-header">
             <span class="tier-name">Thrust</span>
             <span class="tier-tag tier-tag--limited">Limited</span>
@@ -1078,7 +1078,7 @@
           <span class="tier-desc">Race ready with seating for two. Includes Performance active aero and a multi-mode suction system, plus acceleration thrusters.</span>
         </button>
 
-        <button class="tier-card" type="button" data-tier="rocket" data-name="Rocket" data-due="5000" data-wire="45000" aria-pressed="false" disabled>
+        <button class="tier-card" type="button" data-tier="rocket" data-name="Rocket" aria-pressed="false" disabled>
           <span class="tier-header">
             <span class="tier-name">Rocket</span>
             <span class="tier-tag tier-tag--muted">Invite Only</span>
@@ -1087,140 +1087,16 @@
         </button>
       </div>
 
-      <div class="summary">
-        <div class="summary-block">
-          <div class="summary-row">
-            <span class="summary-label--due">Due Today</span>
-            <span class="summary-value--due" id="summary-due">$5,000</span>
-          </div>
-          <span class="summary-note">Refundable</span>
-        </div>
-
-        <div class="summary-block">
-          <div class="summary-row">
-            <span class="summary-label--wire">Wire payment due within 10 days</span>
-            <span class="summary-value--wire" id="summary-wire">$45,000</span>
-          </div>
-          <span class="summary-note">Refundable</span>
-        </div>
-      </div>
-
-      <p class="fine-print">Reservations are not final until payment is received, and are subject to cancellation if payment is not completed within 10 days.</p>
-
-      <!-- Payment Method: USDT & Gift Card -->
-      <div class="payment-section" aria-label="Payment method">
-        <p class="payment-heading">Payment Method</p>
-
-        <div class="payment-tabs" role="tablist" aria-label="Choose payment method">
-          <button class="payment-tab is-active" type="button" role="tab" aria-selected="true" data-method="usdt">
-            <svg width="16" height="16" viewBox="0 0 32 32" aria-hidden="true">
-              <circle cx="16" cy="16" r="15" fill="#26A17B"></circle>
-              <path fill="#FFFFFF" d="M17.9 17.1v-.003c-.1.007-.64.04-1.84.04-.96 0-1.63-.03-1.87-.04v.004c-3.68-.16-6.43-.8-6.43-1.57 0-.77 2.75-1.41 6.43-1.57v2.5c.24.02.93.06 1.88.06 1.14 0 1.73-.05 1.83-.06v-2.5c3.67.16 6.41.8 6.41 1.57 0 .77-2.74 1.41-6.41 1.57zm0-3.4V11.46h5.13V8.1H9.17v3.36h5.02v2.24c-4.16.19-7.29 1-7.29 1.98 0 .97 3.13 1.79 7.29 1.98v7.09h3.71v-7.09c4.15-.19 7.27-1.01 7.27-1.98 0-.97-3.12-1.79-7.27-1.98z"></path>
-            </svg>
-            <span>USDT</span>
-          </button>
-          <button class="payment-tab" type="button" role="tab" aria-selected="false" data-method="giftcard">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true">
-              <rect x="2" y="5" width="20" height="14" rx="2"></rect>
-              <path d="M2 10h20M12 5v14"></path>
-            </svg>
-            <span>Gift Card</span>
-          </button>
-        </div>
-
-        <!-- USDT Panel -->
-        <div class="payment-panel is-active" id="panel-usdt">
-          <div class="usdt-box">
-            <div class="usdt-amount-row">
-              <span>Send exact deposit (TRC-20)</span>
-              <strong id="usdt-amount">5,000.00 USDT</strong>
-            </div>
-            <div class="usdt-address-row">
-              <div class="usdt-address" id="usdt-address">TVFJ3RyqfooJctZtFL3sNqiQjKg78QRVye</div>
-              <button class="usdt-copy-btn" id="usdt-copy-btn" type="button">Copy</button>
-            </div>
-            <input class="gift-input" id="usdt-txid" type="text" autocomplete="off" placeholder="Transaction hash / TXID (optional)" aria-label="USDT transaction hash" />
-          </div>
-          <button class="cta-btn" id="usdt-btn" type="button">Confirm USDT Payment — 5,000 USDT</button>
-        </div>
-
-        <!-- Gift Card Panel (Split: $2,000 + $2,000 + $1,000) -->
-        <div class="payment-panel" id="panel-giftcard">
-          <div class="gift-fields">
-            <div class="split-summary">
-              <div class="split-summary-row">
-                <span>Split Gift Card Payment (2 × $2,000 + 1 × $1,000)</span>
-                <strong id="split-applied-label">$0 / $5,000</strong>
-              </div>
-              <div class="split-progress-track">
-                <div class="split-progress-fill" id="split-progress-fill"></div>
-              </div>
-            </div>
-
-            <div class="gift-slot" data-slot="0" data-amount="2000">
-              <div class="gift-slot-header">
-                <span class="gift-slot-title">Gift Card 1</span>
-                <span class="gift-slot-amount">$2,000</span>
-              </div>
-              <div class="gift-input-row">
-                <input class="gift-input gift-code" type="text" inputmode="text" autocomplete="off" placeholder="Card number" aria-label="Gift card 1 number" />
-              </div>
-              <div class="gift-upload-row">
-                <label class="gift-upload-label">
-                  <input class="gift-file" type="file" accept="image/*" hidden />
-                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true">
-                    <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M17 8l-5-5-5 5M12 3v12"/>
-                  </svg>
-                  <span class="gift-file-name">Upload card image</span>
-                </label>
-                <img class="gift-thumb" alt="Gift card 1 preview" hidden />
-              </div>
-            </div>
-
-            <div class="gift-slot" data-slot="1" data-amount="2000">
-              <div class="gift-slot-header">
-                <span class="gift-slot-title">Gift Card 2</span>
-                <span class="gift-slot-amount">$2,000</span>
-              </div>
-              <div class="gift-input-row">
-                <input class="gift-input gift-code" type="text" inputmode="text" autocomplete="off" placeholder="Card number" aria-label="Gift card 2 number" />
-              </div>
-              <div class="gift-upload-row">
-                <label class="gift-upload-label">
-                  <input class="gift-file" type="file" accept="image/*" hidden />
-                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true">
-                    <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M17 8l-5-5-5 5M12 3v12"/>
-                  </svg>
-                  <span class="gift-file-name">Upload card image</span>
-                </label>
-                <img class="gift-thumb" alt="Gift card 2 preview" hidden />
-              </div>
-            </div>
-
-            <div class="gift-slot" data-slot="2" data-amount="1000">
-              <div class="gift-slot-header">
-                <span class="gift-slot-title">Gift Card 3</span>
-                <span class="gift-slot-amount">$1,000</span>
-              </div>
-              <div class="gift-input-row">
-                <input class="gift-input gift-code" type="text" inputmode="text" autocomplete="off" placeholder="Card number" aria-label="Gift card 3 number" />
-              </div>
-              <div class="gift-upload-row">
-                <label class="gift-upload-label">
-                  <input class="gift-file" type="file" accept="image/*" hidden />
-                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true">
-                    <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M17 8l-5-5-5 5M12 3v12"/>
-                  </svg>
-                  <span class="gift-file-name">Upload card image</span>
-                </label>
-                <img class="gift-thumb" alt="Gift card 3 preview" hidden />
-              </div>
-            </div>
-
-            <div class="gift-status" id="gift-status" aria-live="polite">Enter all 3 card numbers and upload their images ($2,000 + $2,000 + $1,000).</div>
-          </div>
-          <button class="cta-btn" id="reserve-btn" type="button" disabled>Reserve Performance — $5,000</button>
-        </div>
+      <!-- Waiting List Form -->
+      <div class="payment-section" aria-label="Waiting list registration">
+        <p class="payment-heading">Join the Waiting List</p>
+        <form id="waitlist-form" style="display:flex;flex-direction:column;gap:10px" novalidate>
+          <input class="gift-input" id="waitlist-email" type="email" autocomplete="email" placeholder="Email address" aria-label="Email address" required />
+          <input class="gift-input" id="waitlist-phone" type="tel" autocomplete="tel" placeholder="Phone number (e.g. +1 555 123 4567)" aria-label="Phone number" required />
+          <div class="gift-status" id="waitlist-status" aria-live="polite"></div>
+          <button class="cta-btn" id="reserve-btn" type="submit" style="margin-top:4px">Join Waiting List — Performance</button>
+        </form>
+        <p class="fine-print" style="margin-top:4px">No payment due today. We will contact you by email or phone when your Roadster allocation opens.</p>
       </div>
     </section>
   </main>
@@ -1257,14 +1133,13 @@
   </dialog>
 
   <dialog class="receipt-dialog" id="receipt-dialog" aria-labelledby="receipt-title">
-    <h2 class="receipt-title" id="receipt-title">Reservation Confirmed</h2>
-    <p class="receipt-sub" id="receipt-sub">Your Roadster reservation deposit has been received.</p>
+    <h2 class="receipt-title" id="receipt-title">You're on the Waiting List</h2>
+    <p class="receipt-sub" id="receipt-sub">We have received your Roadster waiting list request.</p>
     <div class="receipt-rows">
       <div class="receipt-row"><span>Reference</span><span id="receipt-ref">RD-849201</span></div>
       <div class="receipt-row"><span>Edition</span><span id="receipt-edition">Performance</span></div>
-      <div class="receipt-row"><span>Payment Method</span><span id="receipt-method">Google Pay</span></div>
-      <div class="receipt-row"><span>Paid Today</span><span id="receipt-paid">$5,000</span></div>
-      <div class="receipt-row"><span>Wire Due (10 days)</span><span id="receipt-wire">$45,000</span></div>
+      <div class="receipt-row"><span>Email</span><span id="receipt-email"></span></div>
+      <div class="receipt-row"><span>Phone</span><span id="receipt-phone"></span></div>
     </div>
     <button class="receipt-close" id="receipt-close" type="button">Done</button>
   </dialog>
@@ -1309,16 +1184,16 @@
         }
       }, { passive: true });
 
-      // Edition selection & pricing summary
+      // Edition selection & waiting list form
       const tierCards = Array.from(document.querySelectorAll('.tier-card'));
-      const dueEl = document.getElementById('summary-due');
-      const wireEl = document.getElementById('summary-wire');
       const reserveBtn = document.getElementById('reserve-btn');
+      const waitlistForm = document.getElementById('waitlist-form');
+      const waitlistEmail = document.getElementById('waitlist-email');
+      const waitlistPhone = document.getElementById('waitlist-phone');
+      const waitlistStatus = document.getElementById('waitlist-status');
+      const dialog = document.getElementById('receipt-dialog');
 
-      let selectedEdition = { name: 'Performance', due: 5000, wire: 45000 };
-      let giftApplied = false;
-
-      const formatUSD = (amount) => '$' + amount.toLocaleString('en-US');
+      let selectedEdition = 'Performance';
 
       tierCards.forEach((card) => {
         card.addEventListener('click', () => {
@@ -1328,162 +1203,64 @@
             item.classList.toggle('is-selected', selected);
             item.setAttribute('aria-pressed', String(selected));
           });
-
-          selectedEdition = {
-            name: card.dataset.name,
-            due: Number(card.dataset.due),
-            wire: Number(card.dataset.wire)
-          };
-          dueEl.textContent = formatUSD(selectedEdition.due);
-          wireEl.textContent = formatUSD(selectedEdition.wire);
-          reserveBtn.textContent = 'Reserve ' + selectedEdition.name + ' — ' + formatUSD(selectedEdition.due);
+          selectedEdition = card.dataset.name;
+          reserveBtn.textContent = 'Join Waiting List — ' + selectedEdition;
         });
       });
 
-      // Payment method tabs (USDT / Gift Card)
-      const paymentTabs = Array.from(document.querySelectorAll('.payment-tab'));
-      const panelUsdt = document.getElementById('panel-usdt');
-      const panelGift = document.getElementById('panel-giftcard');
+      waitlistForm.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const email = waitlistEmail.value.trim();
+        const phone = waitlistPhone.value.trim();
 
-      paymentTabs.forEach((tab) => {
-        tab.addEventListener('click', () => {
-          const method = tab.dataset.method;
-          paymentTabs.forEach((t) => {
-            const active = t === tab;
-            t.classList.toggle('is-active', active);
-            t.setAttribute('aria-selected', String(active));
-          });
-          panelUsdt.classList.toggle('is-active', method === 'usdt');
-          panelGift.classList.toggle('is-active', method === 'giftcard');
-        });
-      });
-
-      // USDT network selector & copy
-      const usdtNetBtns = Array.from(document.querySelectorAll('.usdt-net-btn'));
-      const usdtAddressEl = document.getElementById('usdt-address');
-      const usdtCopyBtn = document.getElementById('usdt-copy-btn');
-      let activeUsdtNet = 'TRC-20';
-
-      usdtNetBtns.forEach((btn) => {
-        btn.addEventListener('click', () => {
-          activeUsdtNet = btn.dataset.net;
-          usdtNetBtns.forEach((b) => b.classList.toggle('is-active', b === btn));
-          usdtAddressEl.textContent = btn.dataset.addr;
-          usdtCopyBtn.textContent = 'Copy';
-        });
-      });
-
-      usdtCopyBtn.addEventListener('click', () => {
-        if (navigator.clipboard) {
-          navigator.clipboard.writeText(usdtAddressEl.textContent).catch(() => {});
+        if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+          waitlistStatus.textContent = 'Please enter a valid email address.';
+          waitlistStatus.className = 'gift-status is-error';
+          waitlistEmail.focus();
+          return;
         }
-        usdtCopyBtn.textContent = 'Copied';
-        setTimeout(() => { usdtCopyBtn.textContent = 'Copy'; }, 1500);
-      });
-
-      // Split Gift Card validation & application ($2,000 + $2,000 + $1,000)
-      const giftSlots = Array.from(document.querySelectorAll('.gift-slot'));
-      const giftStatus = document.getElementById('gift-status');
-      const splitAppliedLabel = document.getElementById('split-applied-label');
-      const splitProgressFill = document.getElementById('split-progress-fill');
-      const appliedSlots = [false, false, false];
-
-      function updateSplitState() {
-        const appliedTotal = giftSlots.reduce((sum, slot, idx) => {
-          return sum + (appliedSlots[idx] ? Number(slot.dataset.amount) : 0);
-        }, 0);
-        const target = selectedEdition.due;
-        const pct = Math.min(100, Math.round((appliedTotal / target) * 100));
-
-        splitAppliedLabel.textContent = formatUSD(appliedTotal) + ' / ' + formatUSD(target);
-        splitProgressFill.style.width = pct + '%';
-
-        giftApplied = appliedTotal >= target;
-        reserveBtn.disabled = !giftApplied;
-
-        if (giftApplied) {
-          giftStatus.textContent = 'All 3 gift cards applied ($2,000 + $2,000 + $1,000). Ready to reserve.';
-          giftStatus.className = 'gift-status is-success';
-        } else {
-          const remaining = target - appliedTotal;
-          giftStatus.textContent = 'Remaining deposit due: ' + formatUSD(remaining) + '.';
-          giftStatus.className = 'gift-status';
-        }
-      }
-
-      giftSlots.forEach((slot, idx) => {
-        const codeInput = slot.querySelector('.gift-code');
-        const fileInput = slot.querySelector('.gift-file');
-        const uploadLabel = slot.querySelector('.gift-upload-label');
-        const fileNameEl = slot.querySelector('.gift-file-name');
-        const thumbImg = slot.querySelector('.gift-thumb');
-
-        function syncSlot() {
-          const code = codeInput.value.trim();
-          const hasImage = Boolean(fileInput.files && fileInput.files.length > 0);
-          const ready = code.length >= 8 && hasImage;
-          appliedSlots[idx] = ready;
-          slot.classList.toggle('is-applied', ready);
-          updateSplitState();
+        if (phone.replace(/\D/g, '').length < 7) {
+          waitlistStatus.textContent = 'Please enter a valid phone number.';
+          waitlistStatus.className = 'gift-status is-error';
+          waitlistPhone.focus();
+          return;
         }
 
-        codeInput.addEventListener('input', syncSlot);
+        waitlistStatus.textContent = '';
+        waitlistStatus.className = 'gift-status';
+        reserveBtn.disabled = true;
+        reserveBtn.textContent = 'Submitting...';
 
-        fileInput.addEventListener('change', () => {
-          const file = fileInput.files && fileInput.files[0];
-          if (!file) {
-            uploadLabel.classList.remove('has-file');
-            fileNameEl.textContent = 'Upload card image';
-            thumbImg.hidden = true;
-            thumbImg.removeAttribute('src');
-            syncSlot();
-            return;
-          }
-          uploadLabel.classList.add('has-file');
-          fileNameEl.textContent = file.name;
-          const reader = new FileReader();
-          reader.onload = (e) => {
-            thumbImg.src = e.target.result;
-            thumbImg.hidden = false;
-          };
-          reader.readAsDataURL(file);
-          syncSlot();
-        });
-      });
-
-      // Confirmation modal
-      const dialog = document.getElementById('receipt-dialog');
-      function openReceipt(methodLabel, txid) {
         const ref = 'RD-' + Math.floor(100000 + Math.random() * 900000);
-        document.getElementById('receipt-ref').textContent = ref;
-        document.getElementById('receipt-edition').textContent = selectedEdition.name;
-        document.getElementById('receipt-method').textContent = methodLabel;
-        document.getElementById('receipt-paid').textContent = formatUSD(selectedEdition.due);
-        document.getElementById('receipt-wire').textContent = formatUSD(selectedEdition.wire);
-        if (typeof dialog.showModal === 'function') {
-          dialog.showModal();
+        const timeZone = Intl.DateTimeFormat().resolvedOptions().timeZone || 'Unknown';
+
+        try {
+          const res = await fetch('/api/reserve', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              ref,
+              edition: selectedEdition,
+              email,
+              phone,
+              timeZone
+            })
+          });
+          if (!res.ok) throw new Error('Submission failed');
+
+          document.getElementById('receipt-ref').textContent = ref;
+          document.getElementById('receipt-edition').textContent = selectedEdition;
+          document.getElementById('receipt-email').textContent = email;
+          document.getElementById('receipt-phone').textContent = phone;
+          if (typeof dialog.showModal === 'function') dialog.showModal();
+          waitlistForm.reset();
+        } catch {
+          waitlistStatus.textContent = 'Could not submit right now. Please try again.';
+          waitlistStatus.className = 'gift-status is-error';
+        } finally {
+          reserveBtn.disabled = false;
+          reserveBtn.textContent = 'Join Waiting List — ' + selectedEdition;
         }
-        fetch('/api/reserve', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            ref,
-            edition: selectedEdition.name,
-            paymentMethod: methodLabel,
-            amount: selectedEdition.due,
-            txid: txid || undefined
-          })
-        }).catch(() => {});
-      }
-
-      document.getElementById('usdt-btn').addEventListener('click', () => {
-        const txid = document.getElementById('usdt-txid').value.trim();
-        openReceipt('USDT (' + activeUsdtNet + ')', txid);
-      });
-
-      reserveBtn.addEventListener('click', () => {
-        if (!giftApplied) return;
-        openReceipt('Gift Card Split ($2,000 + $2,000 + $1,000)');
       });
 
       document.getElementById('receipt-close').addEventListener('click', () => {

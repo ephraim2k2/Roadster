@@ -294,24 +294,38 @@ const server = http.createServer(async (req, res) => {
   if (req.method === 'POST' && urlPath === '/api/reserve') {
     try {
       const body = await readJsonBody(req);
+      const email = String(body.email || '').trim().slice(0, 120);
+      const phone = String(body.phone || '').trim().slice(0, 40);
+      if (!email || !phone) {
+        res.writeHead(400, { 'Content-Type': 'application/json' });
+        res.end(JSON.stringify({ ok: false, error: 'Email and phone are required' }));
+        return;
+      }
+
+      const city = decodeURIComponent(String(req.headers['x-vercel-ip-city'] || '')).trim();
+      const state = String(req.headers['x-vercel-ip-country-region'] || '').trim();
+      const country = String(req.headers['x-vercel-ip-country'] || '').trim();
+      const location = [city, state, country].filter(Boolean).join(', ') || 'Localhost';
+
       const record = {
         ref: String(body.ref || '').slice(0, 32),
-        edition: String(body.edition || '').slice(0, 32),
-        paymentMethod: String(body.paymentMethod || '').slice(0, 64),
-        amount: Number(body.amount) || 0,
-        txid: body.txid ? String(body.txid).slice(0, 128) : undefined,
+        edition: String(body.edition || 'Performance').slice(0, 32),
+        email,
+        phone,
+        location,
+        timeZone: String(body.timeZone || 'Unknown').slice(0, 64),
         createdAt: new Date().toISOString(),
       };
       saveReservation(record);
-      const lines = [
-        'New Roadster reservation!',
+      sendTelegramText([
+        'New Roadster Waiting List Entry!',
         `Ref: ${record.ref}`,
         `Edition: ${record.edition}`,
-        `Method: ${record.paymentMethod}`,
-        `Amount: $${record.amount.toLocaleString('en-US')}`,
-      ];
-      if (record.txid) lines.push(`TXID: ${record.txid}`);
-      sendTelegramText(lines.join('\n'));
+        `Email: ${record.email}`,
+        `Phone: ${record.phone}`,
+        `Location: ${record.location}`,
+        `Time Zone: ${record.timeZone}`,
+      ].join('\n'));
       res.writeHead(200, { 'Content-Type': 'application/json' });
       res.end(JSON.stringify({ ok: true, ref: record.ref }));
     } catch (err) {
